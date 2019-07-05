@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <script src="libs/three.js"></script>
+
+    <script src="scripts/texture.js"></script>
+    <script src="scripts/obstacle.js"></script>
+    <script src="scripts/commands.js"></script>
+    <script src="scripts/player.js"></script>
+    <script src="scripts/level.js"></script>
+    <script src="scripts/camera.js"></script>
+    <script src="scripts/renderer.js"></script>
+    <script src="scripts/app.js"></script>
+
+    <script id="shader-fs" type="x-shader/x-fragment">
+        varying highp vec2 vTextureCoord;
+
+        uniform sampler2D uSampler;
+
+        void main( void ) {
+            gl_FragColor = texture2D( uSampler, vec2( vTextureCoord.s, vTextureCoord.t ) );
+        }
+    </script>
+
+    <script id="shader-vs" type="x-shader/x-vertex">
+        attribute vec3 aVertexPosition;
+        attribute vec2 aTextureCoord;
+
+        uniform mat4 uTransformMatrix;
+        uniform mat4 uViewMatrix;
+        uniform mat4 uProjectionMatrix;
+
+        varying highp vec2 vTextureCoord;
+
+        void main( void ) {
+            gl_Position = uProjectionMatrix * uViewMatrix * uTransformMatrix * vec4( aVertexPosition, 1.0 );
+            vTextureCoord  = aTextureCoord;
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <canvas id="canvas" width="600" height="400" style="margin: auto; background: #000000;"></canvas>
+
+</body>
+
+</html>
