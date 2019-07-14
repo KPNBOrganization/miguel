@@ -17,7 +17,7 @@ class Player {
         this.width = 84;
 
         this.texture = null;
-        this.tileCount = { x: 2, y: 1 }; // Number of tiles accordingly
+        this.tileCount = { x: 5, y: 1 }; // Number of tiles accordingly
 
         this.animationTime = 0.0;
 
@@ -131,12 +131,22 @@ class Player {
 
         if( this.onGround ) {
 
-            tileIndex = 0;
-            numTiles = 2;
+            if( this.velocityX === 0 ) {
+
+                tileIndex = 0;
+                numTiles = 2;
+
+            } else {
+
+                animationSpeed = 3.5;
+                tileIndex = 3;
+                numTiles = 2;
+
+            }
 
         } else {
 
-            tileIndex = 0;
+            tileIndex = 2;
             numTiles = 1;
 
         }
@@ -199,7 +209,7 @@ class Player {
     startMove( direction ) {
 
         this.direction = direction;
-        this.velocityX = direction * 500;
+        this.velocityX = direction * 300;
 
     }
 

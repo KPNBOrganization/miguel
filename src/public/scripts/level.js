@@ -8,6 +8,12 @@ class Level {
         this.player = new Player( this );
         this.commands = new Commands( this.player );
 
+        /*
+            TODO:
+            - Jump pad
+            - Moving Platform,
+            - Spikes
+        */
         this.obstacles = [
             new Obstacle( this, 0, 0, this.renderer.canvasWidth, 20 ),
             new Obstacle( this, 200, 20, 100, 20 ),
