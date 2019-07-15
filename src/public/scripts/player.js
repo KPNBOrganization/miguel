@@ -52,13 +52,33 @@ class Player {
 
                 if( this.detectCollision( obstacle, positionX, positionY ) == true ) {
 
+                    if( obstacle.type === OBSTACLE_TYPE_SPIKE ) {
+                        
+                        velocityY = 0.00;
+
+                        positionX = 0.00;
+                        positionY = 20.00;
+            
+                        onGround = true;
+
+                        break;
+
+                    }
+
                     // Detecting, where we hit the obstacle
                     
                     if( this.positionY >= obstacle.positionY + obstacle.height ) {
                         
-                        velocityY = 0.00;
-                        positionY = obstacle.positionY + obstacle.height;
-                        onGround = true;
+                        if( obstacle.type === OBSTACLE_TYPE_TRAMPOLINE ) {
+
+                            velocityY = 500.0;
+
+                        } else {
+                            velocityY = 0.00;
+                            positionY = obstacle.positionY + obstacle.height;
+                            onGround = true;
+
+                        }
 
                     } else if( this.positionY + this.height <= obstacle.positionY ) {
 
