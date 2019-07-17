@@ -11,7 +11,10 @@ class Player {
         this.velocityY = 0.0;
         this.direction = 1;
 
+        this.parentNode = null;
         this.onGround = true;
+
+        this.parentNodeOffsetX = 0;
 
         this.height = 128;
         this.width = 84;
@@ -30,8 +33,24 @@ class Player {
         let velocityX = this.velocityX;
         let velocityY = this.velocityY - this.level.gravity;
 
-        let positionX = this.positionX + velocityX * this.level.renderer.deltaTime;
-        let positionY = this.positionY + velocityY * this.level.renderer.deltaTime;
+        let parentNode = null;
+        
+        let positionX = 0;
+        let positionY = 0;
+
+        let parentNodeOffsetX = this.parentNodeOffsetX;
+
+        if( this.parentNode ) {
+
+            positionX = this.parentNode.positionX + parentNodeOffsetX + velocityX * this.level.renderer.deltaTime;
+            positionY = this.parentNode.positionY + this.parentNode.height + velocityY * this.level.renderer.deltaTime;
+
+        } else {
+
+            positionX = this.positionX + velocityX * this.level.renderer.deltaTime;
+            positionY = this.positionY + velocityY * this.level.renderer.deltaTime;
+
+        }
 
         let onGround = false;
 
@@ -45,20 +64,47 @@ class Player {
             positionY = 20.00;
 
             onGround = true;
+            parentNode = null;
 
         } else {
-
+            
             for( let obstacle of this.level.obstacles ) {
 
                 if( this.detectCollision( obstacle, positionX, positionY ) == true ) {
+
+                    if( obstacle.type === OBSTACLE_TYPE_SPIKE ) {
+                        
+                        velocityY = 0.00;
+
+                        positionX = 0.00;
+                        positionY = 20.00;
+            
+                        onGround = true;
+
+                        break;
+
+                    }
 
                     // Detecting, where we hit the obstacle
                     
                     if( this.positionY >= obstacle.positionY + obstacle.height ) {
                         
-                        velocityY = 0.00;
-                        positionY = obstacle.positionY + obstacle.height;
-                        onGround = true;
+                        if( obstacle.type === OBSTACLE_TYPE_TRAMPOLINE ) {
+
+                            velocityY = 500.0;
+
+                        } else {
+
+                            velocityY = 0;
+
+                            parentNodeOffsetX = positionX - obstacle.positionX;
+
+                            positionY = obstacle.positionY + obstacle.height;
+
+                            onGround = true;
+                            parentNode = obstacle;
+
+                        }
 
                     } else if( this.positionY + this.height <= obstacle.positionY ) {
 
@@ -88,6 +134,9 @@ class Player {
         this.positionY = positionY;
 
         this.onGround = onGround;
+        this.parentNode = parentNode;
+
+        this.parentNodeOffsetX = parentNodeOffsetX;
 
         this.level.renderer.camera.update( this );
 
@@ -201,6 +250,7 @@ class Player {
 
             this.velocityY = 500.0;
             this.onGround = false;
+            this.parentNode = null;
 
         }
 

@@ -1,16 +1,22 @@
 class Obstacle {
 
-    constructor( level, positionX, positionY, width, height ) {
+    // level, positionX, positionY, width, height, texture
+    constructor( props ) {
 
-        this.level = level;
-        this.positionX = positionX;
-        this.positionY = positionY;
-        this.width = width;
-        this.height = height;
+        this.level = props.level;
+        this.positionX = props.positionX;
+        this.positionY = props.positionY;
+        this.width = props.width;
+        this.height = props.height;
+
+        this.velocityX = 0;
+        this.velocityY = 0;
 
         this.texture = this.level.renderer.ctx.createTexture();
 
-        Texture().load( this.level.renderer.ctx, 'images/sand.png', this.texture );
+        Texture().load( this.level.renderer.ctx, props.texture, this.texture );
+
+        this.type = OBSTACLE_TYPE_STATIC;
 
     }
 
@@ -23,9 +29,9 @@ class Obstacle {
         gl.bindBuffer( gl.ARRAY_BUFFER, vertexBuffer );
 
         var vertices = [
-            this.width,  this.height,  0.0,
-            0.0, this.height,  0.0,
-            this.width,  0.0, 0.0,
+            this.width, this.height, 0.0,
+            0.0, this.height, 0.0,
+            this.width, 0.0, 0.0,
             0.0, 0.0, 0.0
         ];
 
