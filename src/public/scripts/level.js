@@ -55,14 +55,14 @@ class Level {
 
     update() {
 
-        this.commands.update();
-        this.player.update();
-
         for( let obstacle of this.obstacles ) {
             if( obstacle.type === OBSTACLE_TYPE_MOVING ) {
                 obstacle.update();
             }
         }
+
+        this.commands.update();
+        this.player.update();
 
     }
 

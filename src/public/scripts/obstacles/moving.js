@@ -12,21 +12,18 @@ class Moving extends Obstacle {
         this.endPosX = props.endPosX;
         this.endPosY = props.endPosY;
 
-        this.velocityX = 0;
-        this.velocityY = 0;
-
     }
 
     update() {
 
+        let positionX = - ( this.endPosX - this.startPosX ) / 2 * Math.cos( Date.now() / 500 ) + this.startPosX + ( this.endPosX - this.startPosX ) / 2;
+        let positionY = - ( this.endPosY - this.startPosY ) / 2 * Math.cos( Date.now() / 500 ) + this.startPosY + ( this.endPosY - this.startPosY ) / 2;
 
-        this.velocityX = Math.sin( Date.now() * Math.PI / 180 );
+        this.velocityX = ( positionX - this.positionX ) / this.level.renderer.deltaTime;
+        this.velocityY = ( positionY - this.positionY ) / this.level.renderer.deltaTime;
 
-        this.positionX = this.startPosX + this.velocityX * this.level.renderer.deltaTime;
- 
-
-        // this.positionX = - ( this.endPosX - this.startPosX ) / 2 * Math.cos( Date.now() / 500 ) + this.startPosX + ( this.endPosX - this.startPosX ) / 2;
-        // this.positionY = - ( this.endPosY - this.startPosY ) / 2 * Math.cos( Date.now() / 500 ) + this.startPosY + ( this.endPosY - this.startPosY ) / 2;
+        this.positionX = positionX;
+        this.positionY = positionY;
 
     }
 

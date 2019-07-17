@@ -9,6 +9,9 @@ class Obstacle {
         this.width = props.width;
         this.height = props.height;
 
+        this.velocityX = 0;
+        this.velocityY = 0;
+
         this.texture = this.level.renderer.ctx.createTexture();
 
         Texture().load( this.level.renderer.ctx, props.texture, this.texture );
