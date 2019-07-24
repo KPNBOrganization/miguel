@@ -1,11 +1,11 @@
-class Player {
+class NPC {
 
-    constructor( level ) {
+    constructor( props ) {
 
-        this.level = level;
+        this.level = props.level;
 
-        this.positionX = 0.0;
-        this.positionY = 20.0;
+        this.positionX = props.positionX;
+        this.positionY = props.positionY;
 
         this.velocityX = 0.0;
         this.velocityY = 0.0;
@@ -19,7 +19,7 @@ class Player {
         this.height = 128;
         this.width = 84;
 
-        this.textureSource = 'images/Miguels-tile-sheet.png';
+        this.textureSource = props.texture;
         this.texture = null;
         this.tileCount = { x: 5, y: 1 }; // Number of tiles accordingly
 

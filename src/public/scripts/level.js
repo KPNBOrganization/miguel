@@ -8,47 +8,178 @@ class Level {
         this.player = new Player( this );
         this.commands = new Commands( this.player );
 
-        /*this.obstacles = [
-            new Obstacle( this, 0, 0, this.renderer.canvasWidth, 20, '/images/sand.png' ),
-            new Trampoline( this, 200, 20, 100, 20, '/images/trampoline.png' ),
-            new Obstacle( this, 400, 50, 100, 70, '/images/sand.png' )
-        ];*/
+        this.npcs = [
+            /*new NPC({
+                level: this,
+                positionX: 200,
+                positionY: 20,
+                texture: 'images/Miguels-tile-sheet.png'
+            })*/
+        ];
 
         this.obstacles = [
             new Obstacle({
                 level: this, 
                 positionX: 0, 
                 positionY: 0, 
-                width: this.renderer.canvasWidth, 
+                width: 1000, 
+                height: 20, 
+                texture: '/images/sand.png'
+            }),
+            new Obstacle({
+                level: this, 
+                positionX: 1000, 
+                positionY: 100, 
+                width: 200, 
+                height: 20, 
+                texture: '/images/sand.png'
+            }),
+            new Obstacle({
+                level: this, 
+                positionX: 1200, 
+                positionY: 200, 
+                width: 200, 
+                height: 20, 
+                texture: '/images/sand.png'
+            }),
+            new Obstacle({
+                level: this, 
+                positionX: 1400, 
+                positionY: 300, 
+                width: 200, 
+                height: 20, 
+                texture: '/images/sand.png'
+            }),
+            new Obstacle({
+                level: this, 
+                positionX: 1000, 
+                positionY: 400, 
+                width: 200, 
+                height: 20, 
+                texture: '/images/sand.png'
+            }),
+            new Obstacle({
+                level: this, 
+                positionX: 1400, 
+                positionY: 550, 
+                width: 200, 
+                height: 20, 
+                texture: '/images/sand.png'
+            }),
+            new Spike({
+                level: this, 
+                positionX: 1400, 
+                positionY: 570, 
+                width: 20, 
+                height: 20, 
+                texture: '/images/spike.png'
+            }),
+            new Obstacle({
+                level: this, 
+                positionX: 500, 
+                positionY: 700, 
+                width: 700, 
+                height: 20, 
+                texture: '/images/sand.png'
+            }),
+            new Obstacle({
+                level: this, 
+                positionX: 300, 
+                positionY: 700, 
+                width: 100, 
+                height: 20, 
+                texture: '/images/sand.png'
+            }),
+            new Obstacle({
+                level: this, 
+                positionX: 0, 
+                positionY: 700, 
+                width: 200, 
                 height: 20, 
                 texture: '/images/sand.png'
             }),
             new Trampoline({
                 level: this, 
-                positionX: 200, 
-                positionY: 20, 
+                positionX: 0, 
+                positionY: 720, 
                 width: 100, 
                 height: 20, 
                 texture: '/images/trampoline.png'
             }),
             new Obstacle({
                 level: this, 
-                positionX: 400, 
-                positionY: 50, 
-                width: 100, 
-                height: 70, 
+                positionX: 100, 
+                positionY: 1420, 
+                width: 400, 
+                height: 20, 
                 texture: '/images/sand.png'
             }),
             new Moving({
                 level: this,
-                positionX: 200,
-                positionY: 100,
+                positionX: 500,
+                positionY: 1420,
                 width: 100,
                 height: 20,
                 texture: '/images/sand.png',
-                endPosX: 300,
-                endPosY: 100
-            })
+                endPosX: 900,
+                endPosY: 1420
+            }),
+            new Obstacle({
+                level: this,
+                positionX: 1000,
+                positionY: 1420,
+                width: 200,
+                height: 20,
+                texture: '/images/sand.png',
+            }),
+            new Obstacle({
+                level: this,
+                positionX: 780,
+                positionY: 1580,
+                width: 100,
+                height: 20,
+                texture: '/images/sand.png',
+            }),
+            new Obstacle({
+                level: this,
+                positionX: 780,
+                positionY: 1600,
+                width: 20,
+                height: 100,
+                texture: '/images/sand.png',
+            }),
+            new Obstacle({
+                level: this,
+                positionX: 700,
+                positionY: 1700,
+                width: 100,
+                height: 20,
+                texture: '/images/sand.png',
+            }),
+            new Obstacle({
+                level: this,
+                positionX: 700,
+                positionY: 1720,
+                width: 20,
+                height: 100,
+                texture: '/images/sand.png',
+            }),
+            new Obstacle({
+                level: this,
+                positionX: 0,
+                positionY: 1820,
+                width: 720,
+                height: 20,
+                texture: '/images/sand.png',
+            }),
+            new Obstacle({
+                level: this,
+                positionX: 0,
+                positionY: 1970,
+                width: 100,
+                height: 20,
+                texture: '/images/sand.png',
+            }),
         ];
 
     }
@@ -61,6 +192,10 @@ class Level {
             }
         }
 
+        for( let npc of this.npcs ) {
+            npc.update();
+        }
+
         this.commands.update();
         this.player.update();
 
@@ -71,9 +206,11 @@ class Level {
         this.player.draw( gl );
 
         for( let obstacle of this.obstacles ) {
-            
             obstacle.draw( gl );
+        }
 
+        for( let npc of this.npcs ) {
+            npc.draw( gl );
         }
 
     }
