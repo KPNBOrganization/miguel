@@ -9,15 +9,24 @@ class Level {
         this.commands = new Commands( this.player );
 
         this.npcs = [
-            /*new NPC({
+            new NPC({
                 level: this,
                 positionX: 200,
                 positionY: 20,
-                texture: 'images/Miguels-tile-sheet.png'
-            })*/
+                texture: 'images/Cactus-tile-sheet.png'
+            })
         ];
 
         this.obstacles = [
+            new Heart({
+                level: this, 
+                positionX: 100, 
+                positionY: 30, 
+                width: 32, 
+                height: 32, 
+                texture: '/images/heart.png'
+            }),
+
             new Obstacle({
                 level: this, 
                 positionX: 0, 

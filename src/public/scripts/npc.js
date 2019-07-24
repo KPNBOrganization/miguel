@@ -16,8 +16,8 @@ class NPC {
 
         this.parentNodeOffsetX = 0;
 
-        this.height = 128;
-        this.width = 84;
+        this.height = 94;
+        this.width = 63;
 
         this.textureSource = props.texture;
         this.texture = null;
@@ -306,6 +306,7 @@ class NPC {
 
             gl.bindTexture( gl.TEXTURE_2D, this.texture );
 
+            gl.pixelStorei( gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true );
             gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image );
             
             gl.bindTexture( gl.TEXTURE_2D, null );

@@ -122,6 +122,9 @@ class Renderer {
 
     draw( gl ) {
 
+        gl.enable( gl.BLEND );
+        gl.blendFunc( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA );
+
         gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 
         this.level.draw( gl );
