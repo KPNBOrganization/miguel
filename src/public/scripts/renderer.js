@@ -111,9 +111,17 @@ class Renderer {
     }
 
     update() {
-
+        
         this.currentFrameTime = Date.now();
-        this.deltaTime = ( this.currentFrameTime - this.lastFrameTime ) / 1000;
+        
+        let deltaTime = this.currentFrameTime - this.lastFrameTime;
+
+        if( deltaTime < 1000 ) {
+
+            this.deltaTime = deltaTime / 1000;
+        
+        }
+
         this.lastFrameTime = this.currentFrameTime;
 
         this.level.update();
@@ -133,7 +141,9 @@ class Renderer {
 
     loop() {
 
-        this.update();
+        if( !document.hidden ) {
+            this.update();
+        }
 
         this.draw( this.ctx );
 

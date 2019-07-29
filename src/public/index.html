@@ -7,24 +7,28 @@
     <script src="libs/three.js"></script>
 
     <!-- Constants -->
-    <script src="scripts/constants/obstacles.js"></script>
+    <script src="scripts/constants/entities.js"></script>
 
     <!-- Core -->
     <script src="scripts/texture.js"></script>
-    <script src="scripts/obstacle.js"></script>
     <script src="scripts/commands.js"></script>
-    <script src="scripts/player.js"></script>
-    <script src="scripts/npc.js"></script>
+    <script src="scripts/entity.js"></script>
     <script src="scripts/level.js"></script>
     <script src="scripts/camera.js"></script>
     <script src="scripts/renderer.js"></script>
     <script src="scripts/app.js"></script>
 
-    <!-- Obstacles -->
-    <script src="scripts/obstacles/spike.js"></script>
-    <script src="scripts/obstacles/trampoline.js"></script>
-    <script src="scripts/obstacles/moving.js"></script>
-    <script src="scripts/obstacles/heart.js"></script>
+    <!-- Player -->
+    <script src="scripts/entities/player.js"></script>
+
+    <!-- NPCs -->
+    <script src="scripts/entities/npcs/cactus.js"></script>
+
+    <!-- Platforms -->
+    <script src="scripts/entities/platforms/static.js"></script>
+    <script src="scripts/entities/platforms/spike.js"></script>
+    <script src="scripts/entities/platforms/trampoline.js"></script>
+    <script src="scripts/entities/platforms/moving.js"></script>
 
     <script id="shader-fs" type="x-shader/x-fragment">
         varying highp vec2 vTextureCoord;

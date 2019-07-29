@@ -1,8 +1,10 @@
-class NPC {
+class NPCCactus extends Entity {
 
     constructor( props ) {
 
-        this.level = props.level;
+        super( props );
+
+        // this.level = props.level;
 
         /*
             NOTE:
@@ -17,8 +19,8 @@ class NPC {
         this.positionX = this.nextRoutePoint.positionX;
         this.positionY = this.nextRoutePoint.positionY;
 
-        this.velocityX = 0.0;
-        this.velocityY = 0.0;
+        // this.velocityX = 0.0;
+        // this.velocityY = 0.0;
         this.direction = 1;
 
         this.parentNode = null;
@@ -29,11 +31,13 @@ class NPC {
         this.height = 128;
         this.width = 84;
 
-        this.textureSource = props.texture;
+        this.textureSrc = props.texture;
         this.texture = null;
         this.tileCount = { x: 5, y: 1 }; // Number of tiles accordingly
 
         this.animationTime = 0.0;
+
+        this.type = ENTITY_TYPE_NPC;
 
         this.loadTexture( this.level.renderer.ctx );
 
@@ -109,11 +113,11 @@ class NPC {
 
         } else {
             
-            for( let obstacle of this.level.obstacles ) {
+            for( let entity of this.level.entities ) {
 
-                if( this.detectCollision( obstacle, positionX, positionY ) == true ) {
+                if( this.detectCollision( entity, positionX, positionY ) == true ) {
 
-                    if( obstacle.type === OBSTACLE_TYPE_SPIKE ) {
+                    if( entity.type === ENTITY_TYPE_SPIKE ) {
                         
                         velocityY = 0.00;
 
@@ -126,11 +130,11 @@ class NPC {
 
                     }
 
-                    // Detecting, where we hit the obstacle
+                    // Detecting, where we hit the entity
                     
-                    if( this.positionY >= obstacle.positionY + obstacle.height ) {
+                    if( this.positionY >= entity.positionY + entity.height ) {
                         
-                        if( obstacle.type === OBSTACLE_TYPE_TRAMPOLINE ) {
+                        if( entity.type === ENTITY_TYPE_TRAMPOLINE ) {
 
                             velocityY = 1000.0;
 
@@ -138,29 +142,29 @@ class NPC {
 
                             velocityY = 0;
 
-                            parentNodeOffsetX = positionX - obstacle.positionX;
+                            parentNodeOffsetX = positionX - entity.positionX;
 
-                            positionY = obstacle.positionY + obstacle.height;
+                            positionY = entity.positionY + entity.height;
 
                             onGround = true;
-                            parentNode = obstacle;
+                            parentNode = entity;
 
                         }
 
-                    } else if( this.positionY + this.height <= obstacle.positionY ) {
+                    } else if( this.positionY + this.height <= entity.positionY ) {
 
                         velocityY = -this.level.gravity; 
-                        positionY = obstacle.positionY - this.height;
+                        positionY = entity.positionY - this.height;
 
-                    } else if( this.positionX < obstacle.positionX ) {
-
-                        velocityX = 0;
-                        positionX = obstacle.positionX - this.width;
-
-                    } else if( this.positionX > obstacle.positionX ) {
+                    } else if( this.positionX < entity.positionX ) {
 
                         velocityX = 0;
-                        positionX = obstacle.positionX + obstacle.width;
+                        positionX = entity.positionX - this.width;
+
+                    } else if( this.positionX > entity.positionX ) {
+
+                        velocityX = 0;
+                        positionX = entity.positionX + entity.width;
 
                     }
 
@@ -181,37 +185,24 @@ class NPC {
 
         this.parentNodeOffsetX = parentNodeOffsetX;
 
-        this.level.renderer.camera.update( this );
+    }
+
+    detectCollision( obstacle, positionX, positionY ) {
+        
+        if( positionX < obstacle.positionX + obstacle.width && 
+            positionX + this.width > obstacle.positionX &&
+            positionY < obstacle.positionY + obstacle.height &&
+            positionY + this.height > obstacle.positionY ) {
+
+            return true;
+
+        }
+
+        return false;
 
     }
 
-    draw( gl ) {
-
-        var vertexBuffer = gl.createBuffer();
-
-        // Initializing Vertex Buffer
-
-        gl.bindBuffer( gl.ARRAY_BUFFER, vertexBuffer );
-
-        var vertices = [
-            this.width,  this.height,  0.0,
-            0.0, this.height,  0.0,
-            this.width,  0.0, 0.0,
-            0.0, 0.0, 0.0
-        ];
-
-        gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( vertices ), gl.STATIC_DRAW );
-
-        gl.vertexAttribPointer( 
-            this.level.renderer.vertexPositionAttribute,
-            3,
-            gl.FLOAT,
-            false,
-            0,
-            0
-        );
-
-        // Initializing Texture Buffer
+    initTextureBuffer( gl ) {
 
         var textureCoordsBuffer = gl.createBuffer();
 
@@ -231,8 +222,8 @@ class NPC {
             } else {
 
                 animationSpeed = 3.5;
-                tileIndex = 1;
-                numTiles = 4;
+                tileIndex = 3;
+                numTiles = 2;
 
             }
 
@@ -266,95 +257,6 @@ class NPC {
 
         gl.uniform1i( this.level.renderer.fragSamplerUniform, 0 );
 
-        // Initializing Transformation matrix
-
-        var transformationMatrix = new THREE.Matrix4();
-
-        transformationMatrix.makeTranslation( this.positionX, this.positionY, 0.0 );
-
-        gl.uniformMatrix4fv( this.level.renderer.vertexTransformUniform, false, new Float32Array( transformationMatrix.toArray() ) );
-
-        // Binding View Matrix ( should we do it every time? )
-
-        gl.uniformMatrix4fv( this.level.renderer.vertexViewUniform, false, new Float32Array( this.level.renderer.viewMatrix.toArray() ) );
-
-        // Binding Projection matrix ( should we do it every time? )
-        gl.uniformMatrix4fv( this.level.renderer.vertexProjectionUniform, false, new Float32Array( this.level.renderer.projectionMatrix.toArray() ) );
-
-        // No shit, you should also use particular program every time you want to render some shit
-
-        gl.drawArrays( gl.TRIANGLE_STRIP, 0, 4 );
-
-    }
-
-    /*jump() {
-
-        if( this.onGround ) {
-
-            this.velocityY = 500.0;
-            this.onGround = false;
-            this.parentNode = null;
-
-        }
-
-    }
-
-    startMove( direction ) {
-
-        this.direction = direction;
-        this.velocityX = direction * 300;
-
-    }
-
-    endMove() {
-
-        this.velocityX = 0;
-
-    }*/
-
-    detectCollision( obstacle, positionX, positionY ) {
-        
-        if( positionX < obstacle.positionX + obstacle.width && 
-            positionX + this.width > obstacle.positionX &&
-            positionY < obstacle.positionY + obstacle.height &&
-            positionY + this.height > obstacle.positionY ) {
-
-            return true;
-
-        }
-
-        return false;
-
-    }
-
-    loadTexture( gl ) {
-
-        this.texture = gl.createTexture();
-        
-        gl.bindTexture( gl.TEXTURE_2D, this.texture );
-
-        // Because loading the image may take some time, loading a 1x1 placeholder
-        gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array( [255, 255, 255, 255] ) );
-
-        gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR );
-        gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );
-        gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );
-
-        var image = new Image();
-
-        image.onload = () => {
-
-            gl.bindTexture( gl.TEXTURE_2D, this.texture );
-
-            gl.pixelStorei( gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true );
-            gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image );
-            
-            gl.bindTexture( gl.TEXTURE_2D, null );
-
-        };
-
-        image.src = this.textureSource;
-
     }
 
     getTextureCoords( index, direction = 1 ) {
@@ -386,13 +288,6 @@ class NPC {
             ];
 
         }
-
-        /*var result = [
-            1.0, 0.0,
-            0.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0
-        ];*/
 
         return result;
 

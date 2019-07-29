@@ -1,3 +1,0 @@
-class Heart extends Obstacle {
-    
-}

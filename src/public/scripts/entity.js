@@ -1,34 +1,44 @@
-class Obstacle {
+class Entity {
 
-    // level, positionX, positionY, width, height, texture
     constructor( props ) {
 
         this.level = props.level;
+
         this.positionX = props.positionX;
         this.positionY = props.positionY;
+
         this.width = props.width;
         this.height = props.height;
 
         this.velocityX = 0;
         this.velocityY = 0;
 
-        this.texture = this.level.renderer.ctx.createTexture();
+        this.textureSrc = props.texture;
+        this.texture = null;
+        this.isTiledTexture = false;
 
-        Texture().load( this.level.renderer.ctx, props.texture, this.texture );
-
-        this.type = OBSTACLE_TYPE_STATIC;
+        this.type = props.type;
 
     }
 
     update() {
-        
+
     }
 
     draw( gl ) {
 
-        var vertexBuffer = gl.createBuffer();
+        this.initVertexBuffer( gl );
+        this.initTextureBuffer( gl );
+        this.initTransformationMatrix( gl );
+        this.bindViewMatrix( gl );
+        this.bindProjectionMatrix( gl );
+        this.drawTriangles( gl );
 
-        // Initializing Vertex Buffer
+    }
+
+    initVertexBuffer( gl ) {
+
+        var vertexBuffer = gl.createBuffer();
 
         gl.bindBuffer( gl.ARRAY_BUFFER, vertexBuffer );
 
@@ -50,17 +60,20 @@ class Obstacle {
             0
         );
 
-        // Initializing Texture Buffer
+    }
+
+    initTextureBuffer( gl ) {
 
         var textureCoordsBuffer = gl.createBuffer();
 
         gl.bindBuffer( gl.ARRAY_BUFFER, textureCoordsBuffer );
-
+        
+        // TODO: Make a method, that will return texture coordinates
         var textureCoords = [
-            this.width / 32, 0.0,
+            1.0, 0.0,
             0.0, 0.0,
-            this.width / 32, this.height / 32,
-            0.0, this.height / 32
+            1.0, 1.0,
+            0.0, 1.0
         ];
 
         gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( textureCoords ), gl.STATIC_DRAW );
@@ -80,7 +93,9 @@ class Obstacle {
 
         gl.uniform1i( this.level.renderer.fragSamplerUniform, 0 );
 
-        // Initializing Transformation matrix
+    }
+
+    initTransformationMatrix( gl ) {
 
         var transformationMatrix = new THREE.Matrix4();
 
@@ -88,25 +103,48 @@ class Obstacle {
 
         gl.uniformMatrix4fv( this.level.renderer.vertexTransformUniform, false, new Float32Array( transformationMatrix.toArray() ) );
 
-        // Binding Projection matrix ( should we do it every time? )
-        gl.uniformMatrix4fv( this.level.renderer.vertexProjectionUniform, false, new Float32Array( this.level.renderer.projectionMatrix.toArray() ) );
+    }
 
-        gl.drawArrays( gl.TRIANGLE_STRIP, 0, 4 );   
+    bindViewMatrix( gl ) {
+
+        gl.uniformMatrix4fv( this.level.renderer.vertexViewUniform, false, new Float32Array( this.level.renderer.viewMatrix.toArray() ) );
 
     }
 
-    /*loadTexture( gl ) {
+    bindProjectionMatrix( gl ) {
+
+        gl.uniformMatrix4fv( this.level.renderer.vertexProjectionUniform, false, new Float32Array( this.level.renderer.projectionMatrix.toArray() ) );
+
+    }
+
+    drawTriangles( gl ) {
+
+        gl.drawArrays( gl.TRIANGLE_STRIP, 0, 4 );
+
+    }
+
+    loadTexture( gl ) {
 
         this.texture = gl.createTexture();
         
         gl.bindTexture( gl.TEXTURE_2D, this.texture );
 
         // Because loading the image may take some time, loading a 1x1 placeholder
-        gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array( [ 255, 255, 255, 255 ] ) );
+        gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array( [255, 255, 255, 255] ) );
 
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+        if( this.isTiledTexture ) {
+
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+
+        } else {
+
+            gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR );
+            gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );
+            gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );
+
+        }
 
         var image = new Image();
 
@@ -120,8 +158,8 @@ class Obstacle {
 
         };
 
-        image.src = 'images/sand.png';
+        image.src = this.textureSrc;
 
-    }*/
+    }
 
 }
