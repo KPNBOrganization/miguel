@@ -11,9 +11,12 @@ class Level {
         this.npcs = [
             new NPC({
                 level: this,
-                positionX: 200,
-                positionY: 20,
-                texture: 'images/Cactus-tile-sheet.png'
+                texture: 'images/Cactus-tile-sheet.png',
+                route: [
+                    { positionX: 200.0, positionY: 20.0 },
+                    { positionX: 400.0, positionY: 20.0 },
+                    { positionX: 200.0, positionY: 20.0 }
+                ]
             })
         ];
 

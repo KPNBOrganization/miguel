@@ -20,6 +20,10 @@ class Obstacle {
 
     }
 
+    update() {
+        
+    }
+
     draw( gl ) {
 
         var vertexBuffer = gl.createBuffer();

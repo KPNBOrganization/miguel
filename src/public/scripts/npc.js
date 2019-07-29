@@ -4,8 +4,18 @@ class NPC {
 
         this.level = props.level;
 
-        this.positionX = props.positionX;
-        this.positionY = props.positionY;
+        /*
+            NOTE:
+            You should specify full route from start to finish to make it loop
+        */
+        this.route = props.route;
+
+        // Maybe you can compare 2 object?
+        this.route[0].isNext = true;
+        this.nextRoutePoint = this.route[0];
+
+        this.positionX = this.nextRoutePoint.positionX;
+        this.positionY = this.nextRoutePoint.positionY;
 
         this.velocityX = 0.0;
         this.velocityY = 0.0;
@@ -16,8 +26,8 @@ class NPC {
 
         this.parentNodeOffsetX = 0;
 
-        this.height = 94;
-        this.width = 63;
+        this.height = 128;
+        this.width = 84;
 
         this.textureSource = props.texture;
         this.texture = null;
@@ -50,6 +60,36 @@ class NPC {
 
             positionX = this.positionX + velocityX * this.level.renderer.deltaTime;
             positionY = this.positionY + velocityY * this.level.renderer.deltaTime;
+
+        }
+
+        for( let i = 0; i < this.route.length; i++ ) {
+
+            const point = this.route[ i ];
+            
+            if( point.isNext && positionX > point.positionX - 5 && positionX < point.positionX + 5 ) {
+                
+                point.isNext = false;
+
+                if( i === this.route.length - 1 ) {
+
+                    this.route[0].isNext = true;
+                    this.nextRoutePoint = this.route[0];
+
+                } else {
+
+                    this.route[ i + 1 ].isNext = true;
+                    this.nextRoutePoint = this.route[ i + 1 ];
+
+                }
+
+                break;
+
+            } else {
+
+                velocityX = 100.0 * Math.sign( this.nextRoutePoint.positionX - positionX );
+
+            }
 
         }
 
@@ -191,8 +231,8 @@ class NPC {
             } else {
 
                 animationSpeed = 3.5;
-                tileIndex = 3;
-                numTiles = 2;
+                tileIndex = 1;
+                numTiles = 4;
 
             }
 
@@ -247,7 +287,7 @@ class NPC {
 
     }
 
-    jump() {
+    /*jump() {
 
         if( this.onGround ) {
 
@@ -270,7 +310,7 @@ class NPC {
 
         this.velocityX = 0;
 
-    }
+    }*/
 
     detectCollision( obstacle, positionX, positionY ) {
         
